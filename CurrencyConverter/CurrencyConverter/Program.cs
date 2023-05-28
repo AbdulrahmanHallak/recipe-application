@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+
 namespace CurrencyConverter;
 
 public class Program
@@ -7,7 +9,11 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-        builder.Services.AddRazorPages();
+        builder.Services.AddRazorPages(options =>
+        {
+            options.Conventions.Add(new PageRouteTransformerConvention(new KebabCaseParameterTransformer()));
+        });
+
         builder.Services.Configure<RouteOptions>(options =>
         {
             options.AppendTrailingSlash = true;
