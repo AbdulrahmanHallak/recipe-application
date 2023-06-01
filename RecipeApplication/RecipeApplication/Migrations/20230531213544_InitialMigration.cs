@@ -12,45 +12,45 @@ namespace RecipeApplication.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Recipes",
+                name: "Recipe",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
                     TimeToCook = table.Column<TimeSpan>(type: "time", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    Method = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false)
+                    Method = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Recipes", x => x.Id);
+                    table.PrimaryKey("PK_Recipe", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Ingredients",
+                name: "Ingredient",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(3,2)", nullable: false),
-                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(6,2)", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
                     RecipeId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Ingredients", x => x.Id);
+                    table.PrimaryKey("PK_Ingredient", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Ingredients_Recipes_RecipeId",
+                        name: "FK_Ingredient_Recipe_RecipeId",
                         column: x => x.RecipeId,
-                        principalTable: "Recipes",
+                        principalTable: "Recipe",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ingredients_RecipeId",
-                table: "Ingredients",
+                name: "IX_Ingredient_RecipeId",
+                table: "Ingredient",
                 column: "RecipeId");
         }
 
@@ -58,10 +58,10 @@ namespace RecipeApplication.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Ingredients");
+                name: "Ingredient");
 
             migrationBuilder.DropTable(
-                name: "Recipes");
+                name: "Recipe");
         }
     }
 }

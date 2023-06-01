@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RecipeApplication.Models;
+using RecipeApplication.Models.ViewModels;
 
 namespace RecipeApplication.Data
 {
@@ -17,20 +18,22 @@ namespace RecipeApplication.Data
         {
             modelBuilder.Entity<Recipe>(s =>
             {
-                s.Property(x => x.Name).HasMaxLength(20);
+                s.Property(x => x.Name).HasMaxLength(60);
                 s.Property(x => x.TimeToCook).HasColumnType("time");
-                s.Property(x => x.Method).HasMaxLength(150);
-                s.ToTable("Recipes");
+                s.Property(x => x.Method).HasMaxLength(300);
+                s.ToTable("Recipe");
             });
 
             modelBuilder.Entity<Ingredient>(s =>
             {
-                s.Property(x => x.Name).HasMaxLength(20);
-                s.Property(x => x.Quantity).HasColumnType("decimal(3, 2)");
-                s.ToTable("Ingredients");
+                s.Property(x => x.Name).HasMaxLength(60);
+                s.Property(x => x.Quantity).HasColumnType("decimal(6, 2)");
+                s.Property(x => x.Unit).HasMaxLength(60);
+                s.ToTable("Ingredient");
             });
         }
         public DbSet<RecipeApplication.Models.Ingredient> Ingredient { get; set; } = default!;
         public DbSet<RecipeApplication.Models.Recipe> Recipe { get; set; } = default!;
+
     }
 }

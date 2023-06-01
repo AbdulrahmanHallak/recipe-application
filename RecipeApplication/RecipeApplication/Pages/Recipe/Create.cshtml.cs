@@ -7,8 +7,36 @@ namespace RecipeApplication.Pages.Recipe;
 public class CreateModel : PageModel
 {
     [BindProperty]
-    public RecipeDetailsVM? Recipe { get; set; }
+    public EditRecipeVM Recipe { get; set; } = default!;
+    private readonly RecipeService _service;
+    public CreateModel(RecipeService service)
+    {
+        _service = service;
+    }
     public void OnGet()
     {
+    }
+    public async Task<IActionResult> OnPost()
+    {
+        try
+        {
+            if (ModelState.IsValid)
+            {
+                var id = await _service.CreateRecipe(Recipe);
+                return RedirectToPage("View", id);
+            }
+        }
+        catch (Exception)
+        {
+            // TODO: Log error
+            // Add a model-level error by using an empty string key
+            ModelState.AddModelError(
+                string.Empty,
+                "An error occured saving the recipe"
+                );
+        }
+
+        //If we got to here, something went wrong
+        return Page();
     }
 }

@@ -32,24 +32,25 @@ namespace RecipeApplication.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
 
                     b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(3, 2)");
+                        .HasColumnType("decimal(6, 2)");
 
                     b.Property<int?>("RecipeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Unit")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RecipeId");
 
-                    b.ToTable("Ingredients", (string)null);
+                    b.ToTable("Ingredient", (string)null);
                 });
 
             modelBuilder.Entity("RecipeApplication.Models.Recipe", b =>
@@ -65,20 +66,20 @@ namespace RecipeApplication.Migrations
 
                     b.Property<string>("Method")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
 
                     b.Property<TimeSpan>("TimeToCook")
                         .HasColumnType("time");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Recipes", (string)null);
+                    b.ToTable("Recipe", (string)null);
                 });
 
             modelBuilder.Entity("RecipeApplication.Models.Ingredient", b =>

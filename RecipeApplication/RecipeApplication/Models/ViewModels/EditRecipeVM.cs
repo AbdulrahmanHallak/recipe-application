@@ -4,7 +4,7 @@ namespace RecipeApplication.Models.ViewModels;
 
 public class EditRecipeVM
 {
-    [Required, StringLength(20)]
+    [Required, StringLength(50)]
     public string Name { get; set; } = string.Empty;
 
 
@@ -12,8 +12,8 @@ public class EditRecipeVM
     public TimeSpan TimeToCook { get; set; }
 
 
-    [Required, StringLength(150)]
+    [Required, StringLength(300)]
     public string Method { get; set; } = string.Empty;
 
-    public ICollection<EditIngredientsVM> Ingredients { get; set; } = default!;
+    public List<EditIngredientsVM> Ingredients { get; set; } = default!;
 }

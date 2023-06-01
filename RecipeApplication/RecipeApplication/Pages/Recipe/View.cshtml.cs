@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RecipeApplication.Models.ViewModels;
 
@@ -11,7 +12,16 @@ public class ViewModel : PageModel
     {
         _service = service;
     }
-    public void OnGet(int id)
+    public async Task<IActionResult> OnGetAsync(int id)
     {
+        Recipe = await _service.GetRecipeDetails(id)!;
+        if (Recipe == null) return NotFound();
+
+        return Page();
+    }
+    public async Task<IActionResult> OnPostDeleteAsync(int id)
+    {
+        await _service.DeleteRecipe(id);
+        return RedirectToPage("/Index");
     }
 }

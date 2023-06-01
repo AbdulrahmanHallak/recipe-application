@@ -1,0 +1,23 @@
+﻿@using RecipeApplication.Models.ViewModels;
+@model EditRecipeVM
+<div class="form-group">
+    <label asp-for="Name" class="col-md-2 control-label"></label>
+    <div class="col-md-10">
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+</div>
+<div class="form-group">
+    <label asp-for="Method" class="col-md-2 control-label"></label>
+    <div class="col-md-10">
+        <textarea asp-for="Method" class="form-control"></textarea>
+        <span asp-validation-for="Method" class="text-danger"></span>
+    </div>
+</div>
+<div class="form-group">
+    <label asp-for="TimeToCook" class="col-md-2 control-label"></label>
+    <div class="col-md-10">
+        <input asp-for="TimeToCook" class="form-control" />
+        <span asp-validation-for="TimeToCook" class="text-danger"></span>
+    </div>
+</div>
