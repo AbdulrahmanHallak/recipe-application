@@ -15,5 +15,5 @@ public class EditRecipeVM
     [Required, StringLength(300)]
     public string Method { get; set; } = string.Empty;
 
-    public List<EditIngredientsVM> Ingredients { get; set; } = default!;
+    public List<EditIngredientsVM> Ingredients { get; set; } = new List<EditIngredientsVM>();
 }
