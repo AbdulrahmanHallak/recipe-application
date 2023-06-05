@@ -12,6 +12,7 @@
     <partial name="_EditRecipePartial" for="Recipe" />
 
     <div class="form-group">
+        @* Creating sub-items like this at the same time as the parent is a PITA unfortunately - hacky JS ensues for now! *@
         <table class="table table-striped" id="ingredients">
             <thead>
                 <tr>
@@ -27,6 +28,7 @@
                     var ingredient = Model.Recipe.Ingredients[i];
                     <tr>
                         <td>
+                            <input asp-for="Recipe.Ingredients[i].Id" type="hidden" />
                             <input asp-for="Recipe.Ingredients[i].Name" />
                             <span asp-validation-for="Recipe.Ingredients[i].Name" class="text-danger"></span>
                         </td>
@@ -54,3 +56,24 @@
         </div>
     </div>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        var ingredients = $('#ingredients tbody');
+        $("#addIngredient").click(function () {
+            var rowNo = ingredients.find('tr').length;
+            var template =
+                '<tr>' +
+                '<td><input name="Recipe.Ingredients[' + rowNo + '].Name" id="Ingredients_' + rowNo + '_Name" /></td>' +
+                '<td><input name="Recipe.Ingredients[' + rowNo + '].Quantity" id="Ingredients_' + rowNo + 'Quantity" /></td>' +
+                '<td><input name="Recipe.Ingredients[' + rowNo + '].Unit" id="Ingredients_' + rowNo + 'Unit" /></td>' +
+                '</tr>';
+            ingredients.append(template);
+        });
+
+        ingredients.on('click', '.remove', function (e) {
+            $(this).closest('tr').remove();
+        });
+    </script>
+    }

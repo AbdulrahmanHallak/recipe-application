@@ -8,6 +8,7 @@ public class CreateModel : PageModel
 {
     [BindProperty]
     public EditRecipeVM Recipe { get; set; } = default!;
+
     private readonly RecipeService _service;
     public CreateModel(RecipeService service)
     {
@@ -15,6 +16,7 @@ public class CreateModel : PageModel
     }
     public void OnGet()
     {
+        Recipe = new EditRecipeVM();
     }
     public async Task<IActionResult> OnPost()
     {
@@ -23,7 +25,7 @@ public class CreateModel : PageModel
             if (ModelState.IsValid)
             {
                 var id = await _service.CreateRecipe(Recipe);
-                return RedirectToPage("View", id);
+                return RedirectToPage("View", new { Id = id });
             }
         }
         catch (Exception)
