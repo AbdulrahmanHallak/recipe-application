@@ -1,0 +1,16 @@
+﻿@model List<todo_mvc.ToDoListModel>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div>
+    @foreach (var item in Model)
+    {
+        <p>@item.Title:  @item.Category</p>
+        <div>
+            <a asp-action="Category" asp-route-Category="@item.Category" class="btn-primary btn">View Category</a>
+        </div>
+        <br>
+        
+    }
+</div>
