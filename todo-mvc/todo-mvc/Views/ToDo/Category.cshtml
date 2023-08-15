@@ -1,0 +1,18 @@
+@model todo_mvc.Models.CategoryViewModel
+@{
+    ViewData["Title"] = Model.CategoryName;
+}
+ <h1>@Model.CategoryName ToDo items:</h1>
+    @if (Model.Items.Count != 0)
+    {
+        <ul>
+            @foreach (var item in Model.Items)
+            {
+                <li>@item.Title</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No items found</p>
+    }
