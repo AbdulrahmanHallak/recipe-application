@@ -2,7 +2,7 @@
 @model CurrencyConverter.Pages.Currency.ConvertModel
 @{
 }
-<form method="post">
+<form asp-page="Convert">
     <div>
         <label asp-for="Input.CurrencyFrom"></label>
         <select class="form-control dropdown" asp-for="Input.CurrencyFrom" asp-items="Model.CurrencyCodes"></select>
