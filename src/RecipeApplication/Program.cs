@@ -10,7 +10,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         // Add services to the container.
         builder.Services.AddDbContext<RecipeApplicationContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("RecipeApplicationContext") ?? throw new InvalidOperationException("Connection string 'RecipeApplicationContext' not found.")));
+            options.UseSqlite(builder.Configuration.GetConnectionString("RecipeApplicationContext") ?? throw new InvalidOperationException("Connection string 'RecipeApplication' not found.")));
 
         builder.Services.AddRazorPages();
         builder.Services.AddScoped(typeof(RecipeService));

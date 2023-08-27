@@ -15,12 +15,12 @@ namespace RecipeApplication.Migrations
                 name: "Recipe",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 60, nullable: false),
                     TimeToCook = table.Column<TimeSpan>(type: "time", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    Method = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false)
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Method = table.Column<string>(type: "TEXT", maxLength: 300, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,12 +31,12 @@ namespace RecipeApplication.Migrations
                 name: "Ingredient",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(6,2)", nullable: false),
-                    Unit = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
-                    RecipeId = table.Column<int>(type: "int", nullable: true)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    RecipeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 60, nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(6, 2)", nullable: false),
+                    Unit = table.Column<string>(type: "TEXT", maxLength: 60, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,7 +45,8 @@ namespace RecipeApplication.Migrations
                         name: "FK_Ingredient_Recipe_RecipeId",
                         column: x => x.RecipeId,
                         principalTable: "Recipe",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
