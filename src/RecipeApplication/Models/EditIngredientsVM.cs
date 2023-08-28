@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace RecipeApplication.Models.ViewModels;
+namespace RecipeApplication.Models;
 
 public class EditIngredientsVM
 {

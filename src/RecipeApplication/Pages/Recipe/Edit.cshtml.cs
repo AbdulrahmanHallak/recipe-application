@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using RecipeApplication.Models.ViewModels;
+using RecipeApplication.Models;
 
 namespace RecipeApplication.Pages.Recipe;
 

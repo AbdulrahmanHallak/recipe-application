@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RecipeApplication.Models;
-using RecipeApplication.Models.ViewModels;
 
 namespace RecipeApplication;
 
