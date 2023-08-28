@@ -1,6 +1,7 @@
 ﻿@using RecipeApplication.Models.ViewModels;
 @model EditRecipeVM
 <div class="form-group">
+    <input asp-for="Id" type="hidden">
     <label asp-for="Name" class="col-md-2 control-label"></label>
     <div class="col-md-10">
         <input asp-for="Name" class="form-control" />
