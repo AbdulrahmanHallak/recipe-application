@@ -20,14 +20,14 @@ public class EditModel : PageModel
         if (Recipe == null) return NotFound();
         return Page();
     }
-    public async Task<IActionResult> OnPostAsync(int id)
+    public async Task<IActionResult> OnPostAsync()
     {
         try
         {
             if (ModelState.IsValid)
             {
-                await _service.UpdateRecipe(id,Recipe);
-                return RedirectToPage("View", new {Id = id});
+                await _service.UpdateRecipe(Recipe);
+                return RedirectToPage("View", new {Recipe.Id});
             }
         }
         catch (Exception)

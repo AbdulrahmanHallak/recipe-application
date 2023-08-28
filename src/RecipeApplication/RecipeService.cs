@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol.Core.Types;
 using RecipeApplication.Models;
 using RecipeApplication.Models.ViewModels;
 
@@ -15,103 +14,106 @@ public class RecipeService
     // Get recipes to view in index.
     public async Task<List<RecipeSummaryVM>> GetRecipes()
     {
-        return await _context.Recipe
-            .Where(s => !s.IsDeleted)
-            .Select(s => new RecipeSummaryVM()
-            {
-                Id = s.Id,
-                Name = s.Name,
-                TimeToCook = $"{s.TimeToCook.Hours}hrs and {s.TimeToCook.Minutes}m",
-                NumberOfIngredients = s.Ingredients.Count(),
-
-            }).ToListAsync();
-
+        var recipeSummary = await
+                    (from recipe in _context.Recipe
+                     where recipe.IsDeleted == false
+                     select new RecipeSummaryVM()
+                     {
+                         Id = recipe.Id,
+                         Name = recipe.Name,
+                         TimeToCook = $"{recipe.TimeToCook.Hours}hrs and {recipe.TimeToCook.Minutes}m",
+                         NumberOfIngredients = recipe.Ingredients.Count(),
+                     }).ToListAsync();
+        return recipeSummary;
     }
     public async Task<RecipeDetailsVM>? GetRecipeDetails(int id)
     {
-        var s = await _context.Recipe
-            .Where(s => !s.IsDeleted)
-            .Where(s => s.Id == id)
-            .Select(s => new RecipeDetailsVM()
-            {
-                Id = s.Id,
-                Name = s.Name,
-                Method = s.Method,
-                TimeToCook = $"{s.TimeToCook.Hours}hrs and {s.TimeToCook.Minutes}minutes",
-                Ingredients = s.Ingredients
-            }).SingleOrDefaultAsync();
-        return s!;
+        var recipeDetails = await
+                (from recipe in _context.Recipe
+                 where recipe.IsDeleted == false && recipe.Id == id
+                 select new RecipeDetailsVM()
+                 {
+                     Id = recipe.Id,
+                     Name = recipe.Name,
+                     Method = recipe.Method,
+                     TimeToCook = $"{recipe.TimeToCook.Hours}hrs and {recipe.TimeToCook.Minutes}minutes",
+                     Ingredients = recipe.Ingredients
+                 }).SingleOrDefaultAsync();
+
+        return recipeDetails ?? throw new InvalidOperationException("There is no entity that correspond to the provided ID");
     }
     public async Task<EditRecipeVM> GetRecipeForUpdate(int id)
     {
-        var recipe = await _context.Recipe
-            .Where(s => !s.IsDeleted)
-            .Where(s => s.Id == id)
-            .Include(s => s.Ingredients)
-            .SingleOrDefaultAsync();
-        var ingredientsVM = new List<EditIngredientsVM>();
-        foreach (var item in recipe.Ingredients)
-        {
-            ingredientsVM.Add(new EditIngredientsVM()
-            {
-                Id = item.Id,
-                Name = item.Name,
-                Quantity = item.Quantity,
-                Unit = item.Unit,
-            });
-        }
-        var recipeVM = new EditRecipeVM()
-        {
-            Name = recipe!.Name,
-            Method = recipe.Method,
-            TimeToCook = recipe.TimeToCook,
-            Ingredients = ingredientsVM
-        };
-        return recipeVM;
+        var recipeForUpdate = await
+                    (from recipe in _context.Recipe
+                     where recipe.IsDeleted == false && recipe.Id == id
+                     select new EditRecipeVM()
+                     {
+                         Id = recipe.Id,
+                         Name = recipe.Name,
+                         Method = recipe.Method,
+                         TimeToCook = recipe.TimeToCook,
+                         Ingredients = new List<EditIngredientsVM>
+                         (
+                            from ingredient in recipe.Ingredients
+                            select new EditIngredientsVM()
+                            {
+                                Name = ingredient.Name,
+                                Quantity = ingredient.Quantity,
+                                Unit = ingredient.Unit,
+                            }
+                         )
+
+                     }).SingleOrDefaultAsync();
+
+        return recipeForUpdate ?? throw new InvalidOperationException("There is no entity with this ID"); ;
     }
+
     public async Task<int> CreateRecipe(EditRecipeVM recipeVM)
     {
-        //var recipe = MapToEntity(id, recipeVM);
-        //to cast the ingredient collection in EditIngredientVM
-        ICollection<Ingredient> ingredients = new List<Ingredient>();
-        foreach (var item in recipeVM.Ingredients)
-        {
-            var ingredient = new Ingredient()
-            {
-                Name = item.Name,
-                Quantity = item.Quantity,
-                Unit = item.Unit,
-            };
-            ingredients.Add(ingredient);
-        }
         var recipe = new Recipe()
         {
             Name = recipeVM.Name,
-            Method = recipeVM.Method,
             TimeToCook = recipeVM.TimeToCook,
-            Ingredients = ingredients
+            Method = recipeVM.Method,
+            Ingredients = new List<Ingredient>
+            (
+                from ingredient in recipeVM.Ingredients
+                select new Ingredient()
+                {
+                    Name = ingredient.Name,
+                    Quantity = ingredient.Quantity,
+                    Unit = ingredient.Unit,
+                }
+            )
         };
-        _context.Recipe.Add(recipe);
+        _context.Add(recipe);
         await _context.SaveChangesAsync();
         return recipe.Id;
     }
-    public async Task<int> UpdateRecipe(int id,EditRecipeVM recipeVM)
+    public async Task<int> UpdateRecipe(EditRecipeVM recipeVM)
     {
-        var recipe = MapToEntity(id,recipeVM);
-        _context.Attach(recipe).State = EntityState.Modified;
-        foreach (var item in recipe.Ingredients)
-        {
-            _context.Attach(item).State = EntityState.Modified;
-        }
+        var recipe = await
+                (from recipee in _context.Recipe
+                 where recipee.IsDeleted == false && recipee.Id == recipeVM.Id
+                 select recipee).Include("Ingredients").SingleOrDefaultAsync();
 
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            throw;
-        }
+        if (recipe is null || recipe.IsDeleted)
+            throw new InvalidOperationException("There is no entity with this id");
+
+        recipe.Name = recipeVM.Name;
+        recipe.TimeToCook = recipeVM.TimeToCook;
+        recipe.Method = recipeVM.Method;
+        recipe.Ingredients =
+                (from ingredient in recipeVM.Ingredients
+                 select new Ingredient()
+                 {
+                     Name = ingredient.Name,
+                     Quantity = ingredient.Quantity,
+                     Unit = ingredient.Unit,
+                 }).ToList();
+
+        await _context.SaveChangesAsync();
         return recipe.Id;
     }
     /// <summary>
@@ -123,33 +125,6 @@ public class RecipeService
         var recipe = await _context.Recipe.FindAsync(recipeId) ?? throw new Exception("Unable to find recipe");
         recipe.IsDeleted = true;
         await _context.SaveChangesAsync();
-    }
-
-    // Cast the EditeRecipeVM to a Recipe entity.
-    private static Recipe MapToEntity(int id,EditRecipeVM recipeVM)
-    {
-        //to cast the ingredient collection in EditIngredientVM
-        ICollection<Ingredient> ingredients = new List<Ingredient>();
-        foreach (var item in recipeVM.Ingredients)
-        {
-            var ingredient = new Ingredient()
-            {
-                Id = item.Id,
-                Name = item.Name,
-                Quantity = item.Quantity,
-                Unit = item.Unit,
-            };
-            ingredients.Add(ingredient);
-        }
-        var recipe = new Recipe()
-        {
-            Id =id,
-            Name = recipeVM.Name,
-            Method = recipeVM.Method,
-            TimeToCook = recipeVM.TimeToCook,
-            Ingredients = ingredients
-        };
-        return recipe;
     }
 }
 
