@@ -17,6 +17,7 @@ namespace RecipeApplication.Data
                 s.Property(x => x.TimeToCook).HasColumnType("time");
                 s.Property(x => x.Method).HasMaxLength(300);
                 s.ToTable("Recipe");
+                s.HasQueryFilter(s => !s.IsDeleted);
             });
 
             modelBuilder.Entity<Ingredient>(s =>
