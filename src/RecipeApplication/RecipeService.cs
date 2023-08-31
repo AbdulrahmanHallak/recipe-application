@@ -28,7 +28,7 @@ public class RecipeService
         return recipeSummary;
     }
 
-    public async Task<RecipeDetailsVM>? GetRecipeDetails(int id)
+    public async Task<RecipeDetailsVM> GetRecipeDetails(int id)
     {
         var recipeDetails = await (
             from recipe in _context.Recipe
@@ -39,6 +39,7 @@ public class RecipeService
                 Name = recipe.Name,
                 Method = recipe.Method,
                 TimeToCook = $"{recipe.TimeToCook.Hours}hrs and {recipe.TimeToCook.Minutes}minutes",
+                LastModified = recipe.LastModified,
                 Ingredients = recipe.Ingredients
             }
         ).SingleOrDefaultAsync();
@@ -84,6 +85,7 @@ public class RecipeService
             Name = recipeVM.Name,
             TimeToCook = recipeVM.TimeToCook,
             Method = recipeVM.Method,
+            LastModified = DateTimeOffset.UtcNow,
             Ingredients = new List<Ingredient>(
                 from ingredient in recipeVM.Ingredients
                 select new Ingredient()
@@ -115,6 +117,7 @@ public class RecipeService
         recipe.Name = recipeVM.Name;
         recipe.TimeToCook = recipeVM.TimeToCook;
         recipe.Method = recipeVM.Method;
+        recipe.LastModified = DateTimeOffset.UtcNow;
         recipe.Ingredients = (
             from ingredient in recipeVM.Ingredients
             select new Ingredient()

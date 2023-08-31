@@ -7,5 +7,6 @@ public class Recipe
     public TimeSpan TimeToCook { get; set; }
     public bool IsDeleted { get; set; }
     public string Method { get; set; } = string.Empty;
+    public DateTimeOffset LastModified { get; set; }
     public ICollection<Ingredient> Ingredients { get; set; } = default!;
 }

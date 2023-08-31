@@ -18,6 +18,7 @@ public class SeedData
                 Name = "Spaghetti Bolognese",
                 TimeToCook = TimeSpan.FromMinutes(30),
                 Method = "1. Boil water and cook spaghetti. 2. Brown the minced meat and onions. 3. Add tomatoes, tomato paste, and seasonings. Simmer for 20 minutes. 4. Serve the Bolognese sauce over cooked spaghetti.",
+                LastModified = DateTimeOffset.UtcNow,
                 Ingredients = new List<Ingredient>
                 {
                     new Ingredient { Name = "Spaghetti", Quantity = 250, Unit = "grams" },
