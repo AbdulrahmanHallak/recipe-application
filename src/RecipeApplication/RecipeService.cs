@@ -111,7 +111,7 @@ public class RecipeService
             .Include("Ingredients")
             .SingleOrDefaultAsync();
 
-        if (recipe is null || recipe.IsDeleted)
+        if (recipe is null)
             throw new InvalidOperationException("There is no entity with this id");
 
         recipe.Name = recipeVM.Name;
