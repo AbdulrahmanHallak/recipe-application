@@ -3,8 +3,9 @@ using RecipeApplication.Filters;
 using RecipeApplication.Models;
 
 namespace RecipeApplication.Controllers;
+
 [Route("api/[controller]")]
-[ApiController , ApiEnabled]
+[ApiController, ApiEnabled, RecipeNotFound]
 public class RecipeApiController : ControllerBase
 {
     private RecipeService _service;
@@ -15,44 +16,14 @@ public class RecipeApiController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
-        try
-        {
-            var recipe = await _service.GetRecipeDetails(id);
-            Response.GetTypedHeaders().LastModified = recipe.LastModified;
-            return Ok(recipe);
-        }
-        catch (Exception ex)
-        {
-            return GetErrorResponse(ex);
-        }
+        var recipe = await _service.GetRecipeDetails(id);
+        Response.GetTypedHeaders().LastModified = recipe.LastModified;
+        return Ok(recipe);
     }
     [HttpPost("{id}")]
     public async Task<IActionResult> Update(int id, EditRecipeVM recipe)
     {
-        try
-        {
-            var recipeId = await _service.UpdateRecipe(recipe);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return GetErrorResponse(ex);
-        }
+        var recipeId = await _service.UpdateRecipe(recipe);
+        return Ok();
     }
-
-    private IActionResult GetErrorResponse(Exception ex)
-    {
-        var error = new ProblemDetails()
-        {
-            Title = "An error occured",
-            Detail = ex.Message,
-            Type = "https://httpsstatuses.com/500",
-            Status = 500
-        };
-        return new ObjectResult(error)
-        {
-            StatusCode = 500
-        };
-    }
-
 }

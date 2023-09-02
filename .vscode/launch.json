@@ -11,6 +11,7 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/RecipeApplication/bin/Debug/net7.0/RecipeApplication.dll",
             "args": [],
+            "console": "externalTerminal",
             "cwd": "${workspaceFolder}/src/RecipeApplication",
             "stopAtEntry": false,
             "serverReadyAction": {
