@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using RecipeApplication.Data;
 namespace RecipeApplication;
 
@@ -13,6 +12,7 @@ public class Program
             options.UseSqlite(builder.Configuration.GetConnectionString("RecipeApplicationContext") ?? throw new InvalidOperationException("Connection string 'RecipeApplication' not found.")));
 
         builder.Services.AddRazorPages();
+        builder.Services.AddControllers();
         builder.Services.AddScoped(typeof(RecipeService));
 
         var app = builder.Build();
@@ -39,6 +39,7 @@ public class Program
         app.UseAuthorization();
 
         app.MapRazorPages();
+        app.MapControllers();
 
         app.Run();
     }
