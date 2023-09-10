@@ -12,6 +12,8 @@ public class Program
         builder.Services.AddDbContext<RecipeApplicationContext>(options =>
             options.UseSqlite(builder.Configuration.GetConnectionString("RecipeApplicationContext") ?? throw new InvalidOperationException("Connection string 'RecipeApplication' not found.")));
 
+        builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                        .AddEntityFrameworkStores<RecipeApplicationContext>();
         builder.Services.AddRazorPages();
         builder.Services.AddControllers();
         builder.Services.AddScoped(typeof(RecipeService));

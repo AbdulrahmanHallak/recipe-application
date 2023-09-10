@@ -1,16 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection.Emit;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using RecipeApplication.Models;
 
 namespace RecipeApplication.Data
 {
-    public class RecipeApplicationContext : DbContext
+    public class RecipeApplicationContext : IdentityDbContext<ApplicationUser>
     {
         public RecipeApplicationContext (DbContextOptions<RecipeApplicationContext> options)
             : base(options)
         {
         }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder) 
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Recipe>(s =>
             {
                 s.Property(x => x.Name).HasMaxLength(60);
@@ -28,8 +31,8 @@ namespace RecipeApplication.Data
                 s.ToTable("Ingredient");
             });
         }
-        public DbSet<RecipeApplication.Models.Ingredient> Ingredient { get; set; } = default!;
-        public DbSet<RecipeApplication.Models.Recipe> Recipe { get; set; } = default!;
+        public DbSet<Ingredient> Ingredient { get; set; } = default!;
+        public DbSet<Recipe> Recipe { get; set; } = default!;
 
     }
 }
