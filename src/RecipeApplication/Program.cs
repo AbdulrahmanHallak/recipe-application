@@ -6,6 +6,7 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        // TODO: Introduce a custom exception for RecipeNotFound.
         var builder = WebApplication.CreateBuilder(args);
         // Add services to the container.
         builder.Services.AddDbContext<RecipeApplicationContext>(options =>
@@ -16,7 +17,7 @@ public class Program
         builder.Services.AddScoped(typeof(RecipeService));
 
         var app = builder.Build();
-
+        // Seed the db if it is empty.
         using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
@@ -30,7 +31,6 @@ public class Program
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
-
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
