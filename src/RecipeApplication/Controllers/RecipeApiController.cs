@@ -13,17 +13,33 @@ public class RecipeApiController : ControllerBase
     {
         _service = service;
     }
+    // GET: api/RecipeApi/123
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(int id)
+    public async Task<IActionResult> OnGetAsync(int id)
     {
-        var recipe = await _service.GetRecipeDetails(id);
-        Response.GetTypedHeaders().LastModified = recipe.LastModified;
-        return Ok(recipe);
+        try
+        {
+            var recipe = await _service.GetRecipeDetails(id);
+            Response.GetTypedHeaders().LastModified = recipe.LastModified;
+            return Ok(recipe);
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
     }
-    [HttpPost("{id}")]
-    public async Task<IActionResult> Update(int id, EditRecipeVM recipe)
+    // PUT: api/RecipeApiController/123
+    [HttpPut("{id}")]
+    public async Task<IActionResult> OnPutAsynck(int id, EditRecipeVM recipe)
     {
-        var recipeId = await _service.UpdateRecipe(recipe);
-        return Ok();
+        try
+        {
+            var recipeId = await _service.UpdateRecipe(recipe);
+            return Ok();
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
     }
 }
