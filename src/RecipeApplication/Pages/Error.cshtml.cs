@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Diagnostics;
@@ -11,16 +12,23 @@ public class ErrorModel : PageModel
 
     public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
-    private readonly ILogger<ErrorModel> _logger;
+    public string? ExceptionMessage { get; set; }
 
-    public ErrorModel(ILogger<ErrorModel> logger)
+    public ErrorModel()
     {
-        _logger = logger;
     }
 
     public void OnGet()
     {
-        RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+        var exceptionHandlerPath = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+        if (exceptionHandlerPath?.Error is InvalidOperationException)
+        {
+            ExceptionMessage = "Recipe not found";
+        }
+        else
+        {
+            ExceptionMessage = "An error occured. Please try again. If the issue persisted please contact us";
+        }
     }
 }
 
