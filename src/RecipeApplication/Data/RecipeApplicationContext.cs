@@ -31,7 +31,6 @@ namespace RecipeApplication.Data
                 s.ToTable("Ingredient");
             });
         }
-        public DbSet<Ingredient> Ingredient { get; set; } = default!;
         public DbSet<Recipe> Recipe { get; set; } = default!;
 
     }
