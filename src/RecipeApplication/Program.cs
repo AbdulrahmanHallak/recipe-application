@@ -1,5 +1,7 @@
+using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using RecipeApplication.Data;
+using Microsoft.AspNetCore.Identity;
 namespace RecipeApplication;
 
 public class Program
@@ -12,10 +14,11 @@ public class Program
         builder.Services.AddDbContext<RecipeApplicationContext>(options =>
             options.UseSqlite(builder.Configuration.GetConnectionString("RecipeApplicationContext") ?? throw new InvalidOperationException("Connection string 'RecipeApplication' not found.")));
 
-        builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                        .AddEntityFrameworkStores<RecipeApplicationContext>();
+        builder.Services.AddAuthenticationServices(builder.Configuration);
+
         builder.Services.AddRazorPages();
         builder.Services.AddControllers();
+
         builder.Services.AddScoped(typeof(RecipeService));
 
         var app = builder.Build();
@@ -38,6 +41,7 @@ public class Program
 
         app.UseRouting();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapRazorPages();
