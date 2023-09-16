@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Identity;
+using RecipeApplication.Configurations;
 using RecipeApplication.Data;
 
 namespace RecipeApplication;
@@ -5,8 +7,18 @@ public static class IdentityServiceCollectionExtensions
 {
     public static IServiceCollection AddAuthenticationServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDefaultIdentity<ApplicationUser>(options => {options.SignIn.RequireConfirmedAccount = true;})
-                .AddEntityFrameworkStores<RecipeApplicationContext>();
+        services.AddDefaultIdentity<ApplicationUser>(options =>
+        {
+            options.SignIn.RequireConfirmedAccount = true;
+            options.Tokens.ProviderMap.Add // Add custom DataProtectorTokenProvider to override tokens lifespan.
+            (
+                "CustomEmailConfirmation",
+                new TokenProviderDescriptor(typeof(CustomEmailConfirmationTokenProvider<IdentityUser>))
+            );
+            options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
+        })
+        .AddEntityFrameworkStores<RecipeApplicationContext>();
+        services.AddTransient<CustomEmailConfirmationTokenProvider<IdentityUser>>(); // Register the custom service into container.
 
         services.AddAuthentication().AddGoogle(options =>
         {
