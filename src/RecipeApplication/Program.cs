@@ -1,7 +1,6 @@
-using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using RecipeApplication.Data;
-using Microsoft.AspNetCore.Identity;
+using RecipeApplication.Configurations;
 namespace RecipeApplication;
 
 public class Program
@@ -20,6 +19,8 @@ public class Program
         builder.Services.AddControllers();
 
         builder.Services.AddScoped(typeof(RecipeService));
+
+        builder.Services.AddEmailServices(builder.Configuration);
 
         var app = builder.Build();
         // Seed the db if it is empty.

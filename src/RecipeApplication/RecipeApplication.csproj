@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentEmail.Mailgun" Version="3.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.10" />
@@ -25,7 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Configurations/" />
     <Folder Include="Filters/" />
+    <Folder Include="Services/" />
   </ItemGroup>
 
 </Project>
