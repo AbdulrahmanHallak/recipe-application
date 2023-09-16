@@ -18,7 +18,7 @@ public static class IdentityServiceCollectionExtensions
             options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
         })
         .AddEntityFrameworkStores<RecipeApplicationContext>();
-        services.AddTransient<CustomEmailConfirmationTokenProvider<IdentityUser>>(); // Register the custom service into container.
+        services.AddTransient<CustomEmailConfirmationTokenProvider<ApplicationUser>>(); // Register the custom service into container.
 
         services.AddAuthentication().AddGoogle(options =>
         {
