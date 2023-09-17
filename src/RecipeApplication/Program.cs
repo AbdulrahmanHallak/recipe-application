@@ -12,8 +12,7 @@ public class Program
         builder.Services.AddDbContext<RecipeApplicationContext>(options =>
             options.UseSqlite(builder.Configuration.GetConnectionString("RecipeApplicationContext") ?? throw new InvalidOperationException("Connection string 'RecipeApplication' not found.")));
 
-        // Add ASP.NET Core Identity and Google external login.
-        builder.Services.AddAuthenticationServices(builder.Configuration);
+        builder.Services.AddAuthenticationServices(builder.Configuration); // Add ASP.NET Core Identity and Google external login.
 
         builder.Services.AddRazorPages();
         builder.Services.AddControllers();
