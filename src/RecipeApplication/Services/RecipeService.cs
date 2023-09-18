@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RecipeApplication.Data;
 using RecipeApplication.Models;
 
 namespace RecipeApplication;
 
 public class RecipeService
 {
-    private readonly Data.RecipeApplicationContext _context;
+    private readonly RecipeApplicationContext _context;
 
     public RecipeService(Data.RecipeApplicationContext context)
     {

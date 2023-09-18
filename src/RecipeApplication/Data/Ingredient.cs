@@ -1,4 +1,4 @@
-﻿namespace RecipeApplication.Models;
+﻿namespace RecipeApplication.Data;
 
 public class Ingredient
 {
