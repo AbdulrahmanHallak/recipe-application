@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using RecipeApplication.Data;
 using RecipeApplication.Configurations;
+using RecipeApplication.Authorization;
+using Microsoft.AspNetCore.Authorization;
 namespace RecipeApplication;
 
 public class Program
@@ -13,6 +15,16 @@ public class Program
             options.UseSqlite(builder.Configuration.GetConnectionString("RecipeApplicationContext") ?? throw new InvalidOperationException("Connection string 'RecipeApplication' not found.")));
 
         builder.Services.AddAuthenticationServices(builder.Configuration); // Add ASP.NET Core Identity and Google external login.
+
+        builder.Services.AddAuthorization(configure =>
+        {
+            configure.AddPolicy("CanManageRecipe", policyBuilder =>
+            {
+                policyBuilder.AddRequirements(new IsRecipeOwnerRequirement());
+            });
+        });
+
+        builder.Services.AddSingleton<IAuthorizationHandler, IsRecipeOwnerHandler>();
 
         builder.Services.AddRazorPages();
         builder.Services.AddControllers();
