@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RecipeApplication.Models;
 
 namespace RecipeApplication.Pages.Recipe;
 
+[Authorize]
 public class CreateModel : PageModel
 {
     [BindProperty]
