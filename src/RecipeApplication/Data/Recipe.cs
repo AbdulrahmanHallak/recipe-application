@@ -8,4 +8,5 @@ public class Recipe
     public string Method { get; set; } = string.Empty;
     public DateTimeOffset LastModified { get; set; }
     public ICollection<Ingredient> Ingredients { get; set; } = default!;
+    public string CreatedById { get; set; } = default!;
 }
