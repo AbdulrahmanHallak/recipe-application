@@ -105,7 +105,7 @@ public class RecipeService
     /// <returns>
     /// An integer representing the unique ID of the newly created recipe.
     /// </returns>
-    public async Task<int> CreateRecipe(EditRecipeVM recipeVM)
+    public async Task<int> CreateRecipe(EditRecipeVM recipeVM, string createdById)
     {
         var recipe = new Recipe()
         {
@@ -113,6 +113,7 @@ public class RecipeService
             TimeToCook = recipeVM.TimeToCook,
             Method = recipeVM.Method,
             LastModified = DateTimeOffset.UtcNow,
+            CreatedById = createdById,
             Ingredients = new List<Ingredient>(
                 from ingredient in recipeVM.Ingredients
                 select new Ingredient()
