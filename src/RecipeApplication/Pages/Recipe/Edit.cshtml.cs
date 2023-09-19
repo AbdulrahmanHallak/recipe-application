@@ -1,23 +1,31 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RecipeApplication.Models;
 
 namespace RecipeApplication.Pages.Recipe;
-
+[Authorize]
 public class EditModel : PageModel
 {
     [BindProperty]
     public EditRecipeVM Recipe { get; set; } = default!;
 
     private readonly RecipeService _service;
-    public EditModel(RecipeService service)
+    private readonly IAuthorizationService _authService;
+    public EditModel(RecipeService service, IAuthorizationService authService)
     {
         _service = service;
+        _authService = authService;
     }
     public async Task<IActionResult> OnGetAsync(int id)
     {
-        Recipe = await _service.GetRecipeForUpdate(id);
-        if (Recipe == null) return NotFound();
+        var recipe = await _service.GetRecipeAsync(id);
+        var authResult = await _authService.AuthorizeAsync(User, recipe, "CanManageRecipe");
+        if (!authResult.Succeeded)
+        {
+            return new ForbidResult();
+        }
+        Recipe = await _service.GetRecipeForUpdate(id); // The exception is handled by ExceptionHandler middleware.
         return Page();
     }
     public async Task<IActionResult> OnPostAsync()
@@ -26,8 +34,13 @@ public class EditModel : PageModel
         {
             if (ModelState.IsValid)
             {
+                var authResult = await _authService.AuthorizeAsync(User, Recipe, "CanManageRecipe");
+                if (!authResult.Succeeded)
+                {
+                    return new ForbidResult();
+                }
                 await _service.UpdateRecipe(Recipe);
-                return RedirectToPage("View", new {Recipe.Id});
+                return RedirectToPage("View", new { Recipe.Id });
             }
         }
         catch (Exception)

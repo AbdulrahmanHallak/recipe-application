@@ -1,4 +1,6 @@
-﻿namespace RecipeApplication.Models;
+﻿using RecipeApplication.Data;
+
+namespace RecipeApplication.Models;
 
 public class RecipeDetailsVM
 {

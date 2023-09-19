@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RecipeApplication.Data;
 using RecipeApplication.Models;
 
 namespace RecipeApplication;
 
 public class RecipeService
 {
-    private readonly Data.RecipeApplicationContext _context;
+    private readonly RecipeApplicationContext _context;
 
     public RecipeService(Data.RecipeApplicationContext context)
     {
@@ -26,6 +27,11 @@ public class RecipeService
             }
         ).ToListAsync();
         return recipeSummary;
+    }
+    public async Task<Recipe> GetRecipeAsync(int id)
+    {
+        var recipe = await _context.Recipe.Where(x => x.Id == id).SingleOrDefaultAsync();
+        return recipe ?? throw new InvalidOperationException();
     }
     /// <summary>
     /// Retrieves detailed information about a recipe by its unique identifier.
@@ -104,7 +110,7 @@ public class RecipeService
     /// <returns>
     /// An integer representing the unique ID of the newly created recipe.
     /// </returns>
-    public async Task<int> CreateRecipe(EditRecipeVM recipeVM)
+    public async Task<int> CreateRecipe(EditRecipeVM recipeVM, string createdById)
     {
         var recipe = new Recipe()
         {
@@ -112,6 +118,7 @@ public class RecipeService
             TimeToCook = recipeVM.TimeToCook,
             Method = recipeVM.Method,
             LastModified = DateTimeOffset.UtcNow,
+            CreatedById = createdById,
             Ingredients = new List<Ingredient>(
                 from ingredient in recipeVM.Ingredients
                 select new Ingredient()

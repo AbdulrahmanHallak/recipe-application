@@ -1,17 +1,15 @@
-﻿using System.Reflection.Emit;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using RecipeApplication.Models;
 
 namespace RecipeApplication.Data
 {
     public class RecipeApplicationContext : IdentityDbContext<ApplicationUser>
     {
-        public RecipeApplicationContext (DbContextOptions<RecipeApplicationContext> options)
+        public RecipeApplicationContext(DbContextOptions<RecipeApplicationContext> options)
             : base(options)
         {
         }
-        protected override void OnModelCreating(ModelBuilder modelBuilder) 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Recipe>(s =>
