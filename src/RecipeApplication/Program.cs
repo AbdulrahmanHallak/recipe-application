@@ -24,7 +24,7 @@ public class Program
             });
         });
 
-        builder.Services.AddSingleton<IAuthorizationHandler, IsRecipeOwnerHandler>();
+        builder.Services.AddScoped<IAuthorizationHandler, IsRecipeOwnerHandler>();
 
         builder.Services.AddRazorPages();
         builder.Services.AddControllers();
