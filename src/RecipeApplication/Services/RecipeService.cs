@@ -28,6 +28,11 @@ public class RecipeService
         ).ToListAsync();
         return recipeSummary;
     }
+    public async Task<Recipe> GetRecipeAsync(int id)
+    {
+        var recipe = await _context.Recipe.Where(x => x.Id == id).SingleOrDefaultAsync();
+        return recipe ?? throw new InvalidOperationException();
+    }
     /// <summary>
     /// Retrieves detailed information about a recipe by its unique identifier.
     /// </summary>
