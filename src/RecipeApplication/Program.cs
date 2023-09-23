@@ -3,6 +3,7 @@ using RecipeApplication.Data;
 using RecipeApplication.Configurations;
 using RecipeApplication.Authorization;
 using Microsoft.AspNetCore.Authorization;
+using Serilog;
 namespace RecipeApplication;
 
 public class Program
@@ -10,9 +11,21 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        // Configure serilog.
+        var serilogConfig = new ConfigurationBuilder()
+                        .AddJsonFile("appsettings.json", true, true)
+                        .Build();
+        Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(serilogConfig).CreateLogger();
+        builder.Host.UseSerilog();
+
         // Add services to the container.
+
         builder.Services.AddDbContext<RecipeApplicationContext>(options =>
-            options.UseSqlite(builder.Configuration.GetConnectionString("RecipeApplicationContext") ?? throw new InvalidOperationException("Connection string 'RecipeApplication' not found.")));
+            options.UseSqlite(builder.Configuration
+            .GetConnectionString("RecipeApplicationContext")
+            ?? throw new InvalidOperationException("Connection string 'RecipeApplication' not found.")));
 
         builder.Services.AddAuthenticationServices(builder.Configuration); // Add ASP.NET Core Identity and Google external login.
 
@@ -31,7 +44,7 @@ public class Program
 
         builder.Services.AddScoped(typeof(RecipeService));
 
-        builder.Services.AddEmailServices(builder.Configuration);
+        builder.Services.AddEmailServices(builder.Configuration); // Add FluentEmail and Mailgun services.
 
         var app = builder.Build();
         // Seed the db if it is empty.
@@ -50,7 +63,7 @@ public class Program
         }
         app.UseHttpsRedirection();
         app.UseStaticFiles();
-
+        app.UseSerilogRequestLogging();
         app.UseRouting();
 
         app.UseAuthentication();
