@@ -24,6 +24,6 @@ public class EmailSender : IEmailSender
 
         else
             foreach (var error in response.ErrorMessages)
-                _logger.LogInformation(error);
+                _logger.LogError(error);
     }
 }
