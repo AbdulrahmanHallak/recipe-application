@@ -1,10 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Namespace;
+using OneOf;
+using OneOf.Types;
 using RecipeApplication.Data;
 using RecipeApplication.Models;
 
 namespace RecipeApplication;
 
-public class RecipeService
+public class RecipeService : IRecipeViewModelService
 {
     private readonly RecipeApplicationContext _context;
 
@@ -13,8 +17,14 @@ public class RecipeService
         _context = context;
     }
 
-    // Get recipes to view in index.
-    public async Task<List<RecipeSummaryVM>> GetRecipes()
+    /// <summary>
+    /// Retrieves a summary of each recipe to view on the index page.
+    /// </summary>
+    /// <returns>
+    /// A list of <see cref="RecipeSummaryVM"/> containing recipe summaries if the database is not empty;
+    /// otherwise, returns <see cref="None"/>.
+    /// </returns>
+    public async Task<OneOf<List<RecipeSummaryVM>, None>> GetRecipesSummaryAsync()
     {
         var recipeSummary = await (
             from recipe in _context.Recipe
@@ -26,24 +36,21 @@ public class RecipeService
                 NumberOfIngredients = recipe.Ingredients.Count(),
             }
         ).ToListAsync();
+
+        if (recipeSummary.IsNullOrEmpty())
+            return new None();
+
         return recipeSummary;
-    }
-    public async Task<Recipe> GetRecipeAsync(int id)
-    {
-        var recipe = await _context.Recipe.Where(x => x.Id == id).SingleOrDefaultAsync();
-        return recipe ?? throw new InvalidOperationException();
     }
     /// <summary>
     /// Retrieves detailed information about a recipe by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the recipe to retrieve.</param>
     /// <returns>
-    /// A <see cref="RecipeDetailsVM"/> object with the details of the recipe if found.
+    /// A <see cref="RecipeDetailsVM"/> object with the details of the recipe if found;
+    /// otherwise, <see cref="None"/>.
     /// </returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when no recipe entity corresponds to the provided ID.
-    /// </exception>
-    public async Task<RecipeDetailsVM> GetRecipeDetails(int id)
+    public async Task<OneOf<RecipeDetailsVM, None>> GetRecipeDetailsAsync(int id)
     {
         var recipeDetails = await (
             from recipe in _context.Recipe
@@ -59,10 +66,10 @@ public class RecipeService
             }
         ).SingleOrDefaultAsync();
 
-        return recipeDetails
-            ?? throw new InvalidOperationException(
-                "There is no entity that correspond to the provided ID"
-            );
+        if (recipeDetails is null)
+            return new None();
+
+        return recipeDetails;
     }
     /// <summary>
     /// Retrieves a recipe for updating based on its unique identifier.
@@ -70,13 +77,10 @@ public class RecipeService
     /// <param name="id">The unique identifier of the recipe to retrieve for updating.</param>
     /// <returns>
     /// An
-    /// <see cref="EditRecipeVM"/> object, which is used by the user to update the recipe.
-    /// If no recipe with the provided ID is found, the method throws an <see cref="InvalidOperationException"/>.
+    /// <see cref="EditRecipeVM"/> object, which is used by the user to update the recipe if found;
+    /// otherwise, <see cref="None"/>.
     /// </returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when no recipe entity corresponds to the provided ID.
-    /// </exception>
-    public async Task<EditRecipeVM> GetRecipeForUpdate(int id)
+    public async Task<OneOf<EditRecipeVM, None>> GetRecipeForUpdateAsync(int id)
     {
         var recipeForUpdate = await (
             from recipe in _context.Recipe
@@ -99,18 +103,20 @@ public class RecipeService
             }
         ).SingleOrDefaultAsync();
 
-        return recipeForUpdate
-            ?? throw new InvalidOperationException("There is no entity with this ID");
-        ;
+        if (recipeForUpdate is null)
+            return new None();
+
+        return recipeForUpdate;
     }
     /// <summary>
     /// Creates a new recipe in the database based on the values provided in the <paramref name="recipeVM"/>.
     /// </summary>
     /// <param name="recipeVM">A <see cref="EditRecipeVM"/> object containing the data for the new recipe.</param>
+    /// <param name="createdById">A GUID representing the user who created the recipe.</param>
     /// <returns>
-    /// An integer representing the unique ID of the newly created recipe.
+    /// An <see cref="int"/> representing the unique Id of the newly created recipe.
     /// </returns>
-    public async Task<int> CreateRecipe(EditRecipeVM recipeVM, string createdById)
+    public async Task<int> CreateRecipeAsync(EditRecipeVM recipeVM, string createdById)
     {
         var recipe = new Recipe()
         {
@@ -138,12 +144,10 @@ public class RecipeService
     /// </summary>
     /// <param name="recipeVM">A <see cref="EditRecipeVM"/> object containing the updated data for the recipe.</param>
     /// <returns>
-    /// An integer representing the ID of the updated recipe.
+    /// An <see cref="int"/> representing the ID of the updated recipe.
+    /// A <see cref="None"/> if the recipe does not exist.
     /// </returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when no recipe entity corresponds to the ID provided in the <paramref name="recipeVM"/>.
-    /// </exception>
-    public async Task<int> UpdateRecipe(EditRecipeVM recipeVM)
+    public async Task<OneOf<int, None>> UpdateRecipeAsync(EditRecipeVM recipeVM)
     {
         var recipe = await (
             from recipee in _context.Recipe
@@ -177,13 +181,18 @@ public class RecipeService
     /// <summary>
     /// Marks a recipe as deleted if it exists.
     /// </summary>
-    /// <param name="recipeId"></param>
-    public async Task DeleteRecipe(int recipeId)
+    /// <param name="id"></param>
+    public async Task DeleteRecipeAsync(int id)
     {
-        var recipe = await _context.Recipe.FindAsync(recipeId);
+        var recipe = await _context.Recipe.FindAsync(id);
         if (recipe is null) return;
 
         recipe.IsDeleted = true;
         await _context.SaveChangesAsync();
+    }
+    public async Task<Recipe> GetRecipeAsync(int id)
+    {
+        var recipe = await _context.Recipe.Where(x => x.Id == id).SingleOrDefaultAsync();
+        return recipe ?? throw new InvalidOperationException();
     }
 }
