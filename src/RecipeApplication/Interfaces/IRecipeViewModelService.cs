@@ -1,5 +1,6 @@
 using OneOf;
 using OneOf.Types;
+using RecipeApplication.Data;
 using RecipeApplication.Models;
 
 namespace RecipeApplication.Interfaces;
@@ -11,4 +12,5 @@ public interface IRecipeViewModelService
     public Task<int> CreateRecipeAsync(EditRecipeVM recipe, string createdById);
     public Task<OneOf<int, None>> UpdateRecipeAsync(EditRecipeVM recipe);
     public Task DeleteRecipeAsync(int id);
+    public Task<Recipe> GetRecipeForAuthorizationAsync(int id);
 }

@@ -190,9 +190,9 @@ public class RecipeViewModelService : IRecipeViewModelService
         recipe.IsDeleted = true;
         await _context.SaveChangesAsync();
     }
-    public async Task<Recipe> GetRecipeAsync(int id)
+    public async Task<Recipe> GetRecipeForAuthorizationAsync(int id)
     {
         var recipe = await _context.Recipe.Where(x => x.Id == id).SingleOrDefaultAsync();
-        return recipe ?? throw new InvalidOperationException();
+        return recipe!;
     }
 }
