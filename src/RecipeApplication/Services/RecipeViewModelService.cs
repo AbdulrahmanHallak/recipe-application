@@ -1,18 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Namespace;
 using OneOf;
 using OneOf.Types;
 using RecipeApplication.Data;
+using RecipeApplication.Interfaces;
 using RecipeApplication.Models;
 
 namespace RecipeApplication;
 
-public class RecipeService : IRecipeViewModelService
+public class RecipeViewModelService : IRecipeViewModelService
 {
     private readonly RecipeApplicationContext _context;
 
-    public RecipeService(Data.RecipeApplicationContext context)
+    public RecipeViewModelService(Data.RecipeApplicationContext context)
     {
         _context = context;
     }

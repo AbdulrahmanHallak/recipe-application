@@ -2,7 +2,7 @@ using OneOf;
 using OneOf.Types;
 using RecipeApplication.Models;
 
-namespace Namespace;
+namespace RecipeApplication.Interfaces;
 public interface IRecipeViewModelService
 {
     public Task<OneOf<List<RecipeSummaryVM>, None>> GetRecipesSummaryAsync();

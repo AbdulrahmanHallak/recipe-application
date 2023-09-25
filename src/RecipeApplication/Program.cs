@@ -4,6 +4,7 @@ using RecipeApplication.Configurations;
 using RecipeApplication.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Serilog;
+using RecipeApplication.Interfaces;
 namespace RecipeApplication;
 
 public class Program
@@ -42,7 +43,7 @@ public class Program
         builder.Services.AddRazorPages();
         builder.Services.AddControllers();
 
-        builder.Services.AddScoped(typeof(RecipeService));
+        builder.Services.AddScoped<IRecipeViewModelService, RecipeViewModelService>();
 
         builder.Services.AddEmailServices(builder.Configuration); // Add FluentEmail and Mailgun services.
 
