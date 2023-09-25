@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using NuGet.Protocol.Core.Types;
 using RecipeApplication.Interfaces;
 using RecipeApplication.Models;
 
@@ -21,12 +20,12 @@ public class EditModel : PageModel
     }
     public async Task<IActionResult> OnGetAsync(int id)
     {
-        // // var recipe = await _service.GetRecipeAsync(id);
-        // // var authResult = await _authService.AuthorizeAsync(User, recipe, "CanManageRecipe");
-        // if (!authResult.Succeeded)
-        // {
-        //     return new ForbidResult();
-        // }
+        var recipe = await _service.GetRecipeForAuthorizationAsync(id);
+        var authResult = await _authService.AuthorizeAsync(User, recipe, "CanManageRecipe");
+        if (!authResult.Succeeded)
+        {
+            return new ForbidResult();
+        }
         var result = await _service.GetRecipeForUpdateAsync(id);
 
         return result.Match
@@ -41,7 +40,8 @@ public class EditModel : PageModel
         {
             if (ModelState.IsValid)
             {
-                var authResult = await _authService.AuthorizeAsync(User, Recipe, "CanManageRecipe");
+                var recipe = await _service.GetRecipeForAuthorizationAsync(Recipe.Id);
+                var authResult = await _authService.AuthorizeAsync(User, recipe, "CanManageRecipe");
                 if (!authResult.Succeeded)
                 {
                     return new ForbidResult();

@@ -21,9 +21,9 @@ public class ViewModel : PageModel
     }
     public async Task<IActionResult> OnGetAsync(int id)
     {
-        // var recipe = _service.GetRecipeAsync(id);
-        // var authResult = await _authService.AuthorizeAsync(User, recipe, "CanManageRecipe");
-        // CanManageRecipe = authResult.Succeeded;
+        var recipe = await _service.GetRecipeForAuthorizationAsync(id);
+        var authResult = await _authService.AuthorizeAsync(User, recipe, "CanManageRecipe");
+        CanManageRecipe = authResult.Succeeded;
 
         var result = await _service.GetRecipeDetailsAsync(id);
         return result.Match<IActionResult>
@@ -34,6 +34,12 @@ public class ViewModel : PageModel
     }
     public async Task<IActionResult> OnPostDeleteAsync(int id)
     {
+        var recipe = await _service.GetRecipeForAuthorizationAsync(id);
+        var authResult = await _authService.AuthorizeAsync(User, recipe, "CanManageRecipe");
+        if (!authResult.Succeeded)
+        {
+            return new ForbidResult();
+        }
         await _service.DeleteRecipeAsync(id);
         return RedirectToPage("/Index");
     }
