@@ -8,8 +8,8 @@ namespace RecipeApplication.Controllers;
 [ApiController, ApiEnabled, RecipeNotFound]
 public class RecipeApiController : ControllerBase
 {
-    private RecipeService _service;
-    public RecipeApiController(RecipeService service)
+    private RecipeViewModelService _service;
+    public RecipeApiController(RecipeViewModelService service)
     {
         _service = service;
     }
@@ -17,29 +17,22 @@ public class RecipeApiController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> OnGetAsync(int id)
     {
-        try
-        {
-            var recipe = await _service.GetRecipeDetails(id);
-            Response.GetTypedHeaders().LastModified = recipe.LastModified;
-            return Ok(recipe);
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        var result = await _service.GetRecipeDetailsAsync(id);
+        return result.Match<IActionResult>
+        (
+            recipe => Ok(recipe),
+            _ => NotFound()
+        );
     }
     // PUT: api/RecipeApiController/123
     [HttpPut("{id}")]
     public async Task<IActionResult> OnPutAsynck(int id, EditRecipeVM recipe)
     {
-        try
-        {
-            var recipeId = await _service.UpdateRecipe(recipe);
-            return Ok();
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        var result = await _service.UpdateRecipeAsync(recipe);
+        return result.Match<IActionResult>
+        (
+            id => Ok(id),
+            _ => NotFound()
+        );
     }
 }

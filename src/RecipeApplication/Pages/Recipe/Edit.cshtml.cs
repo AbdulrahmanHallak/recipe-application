@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using RecipeApplication.Interfaces;
 using RecipeApplication.Models;
 
 namespace RecipeApplication.Pages.Recipe;
@@ -10,23 +11,28 @@ public class EditModel : PageModel
     [BindProperty]
     public EditRecipeVM Recipe { get; set; } = default!;
 
-    private readonly RecipeService _service;
+    private readonly IRecipeViewModelService _service;
     private readonly IAuthorizationService _authService;
-    public EditModel(RecipeService service, IAuthorizationService authService)
+    public EditModel(IRecipeViewModelService service, IAuthorizationService authService)
     {
         _service = service;
         _authService = authService;
     }
     public async Task<IActionResult> OnGetAsync(int id)
     {
-        var recipe = await _service.GetRecipeAsync(id);
+        var recipe = await _service.GetRecipeForAuthorizationAsync(id);
         var authResult = await _authService.AuthorizeAsync(User, recipe, "CanManageRecipe");
         if (!authResult.Succeeded)
         {
             return new ForbidResult();
         }
-        Recipe = await _service.GetRecipeForUpdate(id); // The exception is handled by ExceptionHandler middleware.
-        return Page();
+        var result = await _service.GetRecipeForUpdateAsync(id);
+
+        return result.Match
+        (
+            (recipe) => { Recipe = recipe; return Page(); },
+            _ => Page()
+        );
     }
     public async Task<IActionResult> OnPostAsync()
     {
@@ -34,13 +40,18 @@ public class EditModel : PageModel
         {
             if (ModelState.IsValid)
             {
-                var authResult = await _authService.AuthorizeAsync(User, Recipe, "CanManageRecipe");
+                var recipe = await _service.GetRecipeForAuthorizationAsync(Recipe.Id);
+                var authResult = await _authService.AuthorizeAsync(User, recipe, "CanManageRecipe");
                 if (!authResult.Succeeded)
                 {
                     return new ForbidResult();
                 }
-                await _service.UpdateRecipe(Recipe);
-                return RedirectToPage("View", new { Recipe.Id });
+                var result = await _service.UpdateRecipeAsync(Recipe);
+                return result.Match<IActionResult>
+                (
+                    id => RedirectToPage("View", new { id }),
+                    _ => Page()
+                );
             }
         }
         catch (Exception)

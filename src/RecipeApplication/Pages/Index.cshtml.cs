@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using RecipeApplication.Interfaces;
 using RecipeApplication.Models;
 
 namespace RecipeApplication.Pages;
 public class IndexModel : PageModel
 {
     private readonly ILogger<IndexModel> _logger;
-    private readonly RecipeService _service;
-    public IEnumerable<RecipeSummaryVM> Recipe { get; set; } = default!;
+    private readonly IRecipeViewModelService _service;
+    public List<RecipeSummaryVM>? Recipes { get; set; }
 
-    public IndexModel(ILogger<IndexModel> logger , RecipeService service)
+    public IndexModel(ILogger<IndexModel> logger, IRecipeViewModelService service)
     {
         _logger = logger;
         _service = service;
@@ -17,7 +18,11 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnGet()
     {
-        Recipe = await _service.GetRecipes();
-        return Page();
+        var result = await _service.GetRecipesSummaryAsync();
+        return result.Match<IActionResult>
+        (
+            list => { Recipes = list; return Page(); },
+            _ => Page()
+        );
     }
 }

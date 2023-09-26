@@ -1,9 +1,9 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RecipeApplication.Data;
+using RecipeApplication.Interfaces;
 using RecipeApplication.Models;
 
 namespace RecipeApplication.Pages.Recipe;
@@ -14,9 +14,9 @@ public class CreateModel : PageModel
     [BindProperty]
     public EditRecipeVM Recipe { get; set; } = default!;
 
-    private readonly RecipeService _service;
+    private readonly IRecipeViewModelService _service;
     private readonly UserManager<ApplicationUser> _userManager;
-    public CreateModel(RecipeService service, UserManager<ApplicationUser> userManager)
+    public CreateModel(IRecipeViewModelService service, UserManager<ApplicationUser> userManager)
     {
         _service = service;
         _userManager = userManager;
@@ -35,7 +35,7 @@ public class CreateModel : PageModel
                 if (user is null)
                     return Page();
 
-                var id = await _service.CreateRecipe(Recipe, user.Id);
+                var id = await _service.CreateRecipeAsync(Recipe, user.Id);
                 return RedirectToPage("View", new { Id = id });
             }
         }
