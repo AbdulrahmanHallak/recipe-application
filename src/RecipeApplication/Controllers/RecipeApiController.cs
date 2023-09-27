@@ -5,7 +5,7 @@ using RecipeApplication.Models;
 namespace RecipeApplication.Controllers;
 
 [Route("api/[controller]")]
-[ApiController, ApiEnabled, RecipeNotFound]
+[ApiController, ApiEnabled]
 public class RecipeApiController : ControllerBase
 {
     private RecipeViewModelService _service;
