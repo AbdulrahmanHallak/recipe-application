@@ -17,15 +17,18 @@ public class Program
         var serilogConfig = new ConfigurationBuilder()
                         .AddJsonFile("appsettings.json", true, true)
                         .Build();
+
         Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(serilogConfig).CreateLogger();
+            .ReadFrom
+            .Configuration(serilogConfig)
+            .CreateLogger();
+
         builder.Host.UseSerilog();
 
         // Add services to the container.
 
         builder.Services.AddDbContext<RecipeApplicationContext>(options =>
-            options.UseSqlite(builder.Configuration
-            .GetConnectionString("RecipeApplicationContext")
+            options.UseSqlite(builder.Configuration.GetConnectionString("RecipeApplicationContext")
             ?? throw new InvalidOperationException("Connection string 'RecipeApplication' not found.")));
 
         builder.Services.AddAuthenticationServices(builder.Configuration); // Add ASP.NET Core Identity and Google external login.
@@ -40,14 +43,16 @@ public class Program
 
         builder.Services.AddScoped<IAuthorizationHandler, IsRecipeOwnerHandler>();
 
-        builder.Services.AddRazorPages();
-        builder.Services.AddControllers();
-
         builder.Services.AddScoped<IRecipeViewModelService, RecipeViewModelService>();
 
         builder.Services.AddEmailServices(builder.Configuration); // Add FluentEmail and Mailgun services.
 
+        builder.Services.AddRazorPages();
+        builder.Services.AddControllers();
+
         var app = builder.Build();
+
+
         // Seed the db if it is empty.
         using (var scope = app.Services.CreateScope())
         {
@@ -64,7 +69,9 @@ public class Program
         }
         app.UseHttpsRedirection();
         app.UseStaticFiles();
+
         app.UseSerilogRequestLogging();
+
         app.UseRouting();
 
         app.UseAuthentication();
