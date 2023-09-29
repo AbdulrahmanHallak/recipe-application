@@ -155,4 +155,21 @@ public class RecipeViewModelService : IRecipeViewModelService
         var recipe = await _context.Recipe.Where(x => x.Id == id).SingleOrDefaultAsync();
         return recipe!;
     }
+
+    public async Task<OneOf<List<UserRecipesVM>, None>> GetRecipesForUserAsync(string userId, int numOfRecipes)
+    {
+        var recipes = await
+            (from r in _context.Recipe
+            where r.CreatedById == userId
+            select new UserRecipesVM()
+            {
+                Id = r.Id,
+                Name = r.Name
+            }).Take(numOfRecipes).ToListAsync();
+
+        if(recipes.IsNullOrEmpty())
+            return new None();
+
+        return recipes;
+    }
 }
