@@ -4,11 +4,11 @@ using RecipeApplication.Data;
 using RecipeApplication.Interfaces;
 
 namespace RecipeApplication.ViewComponents;
-public class MyRecipesViewComponent : ViewComponent
+public class UserRecipesViewComponent : ViewComponent
 {
     private readonly IRecipeViewModelService _recipeService;
     private readonly UserManager<ApplicationUser> _userManager;
-    public MyRecipesViewComponent(IRecipeViewModelService recipeService, UserManager<ApplicationUser> userManager)
+    public UserRecipesViewComponent(IRecipeViewModelService recipeService, UserManager<ApplicationUser> userManager)
     {
         _recipeService = recipeService;
         _userManager = userManager;
