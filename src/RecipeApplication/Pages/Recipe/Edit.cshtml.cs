@@ -20,13 +20,13 @@ public class EditModel : PageModel
     }
     public async Task<IActionResult> OnGetAsync(int id)
     {
-        var recipe = await _service.GetRecipeForAuthorizationAsync(id);
+        var recipe = await _service.GetForAuthorizationAsync(id);
         var authResult = await _authService.AuthorizeAsync(User, recipe, "CanManageRecipe");
         if (!authResult.Succeeded)
         {
             return new ForbidResult();
         }
-        var result = await _service.GetRecipeForUpdateAsync(id);
+        var result = await _service.GetForUpdateAsync(id);
 
         return result.Match
         (
@@ -40,13 +40,13 @@ public class EditModel : PageModel
         {
             if (ModelState.IsValid)
             {
-                var recipe = await _service.GetRecipeForAuthorizationAsync(Recipe.Id);
+                var recipe = await _service.GetForAuthorizationAsync(Recipe.Id);
                 var authResult = await _authService.AuthorizeAsync(User, recipe, "CanManageRecipe");
                 if (!authResult.Succeeded)
                 {
                     return new ForbidResult();
                 }
-                var result = await _service.UpdateRecipeAsync(Recipe);
+                var result = await _service.UpdateAsync(Recipe);
                 return result.Match<IActionResult>
                 (
                     id => RedirectToPage("View", new { id }),

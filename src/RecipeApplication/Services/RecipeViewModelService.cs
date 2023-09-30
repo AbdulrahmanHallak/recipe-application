@@ -17,7 +17,7 @@ public class RecipeViewModelService : IRecipeViewModelService
         _context = context;
     }
 
-    public async Task<OneOf<List<RecipeSummaryVM>, None>> GetRecipesSummaryAsync()
+    public async Task<OneOf<List<RecipeSummaryVM>, None>> GetSummariesAsync()
     {
         var recipeSummary = await (
             from recipe in _context.Recipe
@@ -36,7 +36,7 @@ public class RecipeViewModelService : IRecipeViewModelService
         return recipeSummary;
     }
 
-    public async Task<OneOf<RecipeDetailsVM, None>> GetRecipeDetailsAsync(int id)
+    public async Task<OneOf<RecipeDetailsVM, None>> GetDetailAsync(int id)
     {
         var recipeDetails = await (
             from recipe in _context.Recipe
@@ -58,7 +58,7 @@ public class RecipeViewModelService : IRecipeViewModelService
         return recipeDetails;
     }
 
-    public async Task<OneOf<EditRecipeVM, None>> GetRecipeForUpdateAsync(int id)
+    public async Task<OneOf<EditRecipeVM, None>> GetForUpdateAsync(int id)
     {
         var recipeForUpdate = await (
             from recipe in _context.Recipe
@@ -87,7 +87,7 @@ public class RecipeViewModelService : IRecipeViewModelService
         return recipeForUpdate;
     }
 
-    public async Task<int> CreateRecipeAsync(EditRecipeVM recipeVM, string createdById)
+    public async Task<int> CreateAsync(EditRecipeVM recipeVM, string createdById)
     {
         var recipe = new Recipe()
         {
@@ -111,7 +111,7 @@ public class RecipeViewModelService : IRecipeViewModelService
         return recipe.Id;
     }
 
-    public async Task<OneOf<int, None>> UpdateRecipeAsync(EditRecipeVM recipeVM)
+    public async Task<OneOf<int, None>> UpdateAsync(EditRecipeVM recipeVM)
     {
         var recipe = await (
             from recipee in _context.Recipe
@@ -142,7 +142,7 @@ public class RecipeViewModelService : IRecipeViewModelService
         return recipe.Id;
     }
 
-    public async Task DeleteRecipeAsync(int id)
+    public async Task DeleteAsync(int id)
     {
         var recipe = await _context.Recipe.FindAsync(id);
         if (recipe is null) return;
@@ -150,24 +150,25 @@ public class RecipeViewModelService : IRecipeViewModelService
         recipe.IsDeleted = true;
         await _context.SaveChangesAsync();
     }
-    public async Task<Recipe> GetRecipeForAuthorizationAsync(int id)
+
+    public async Task<Recipe> GetForAuthorizationAsync(int id)
     {
         var recipe = await _context.Recipe.Where(x => x.Id == id).SingleOrDefaultAsync();
         return recipe!;
     }
 
-    public async Task<OneOf<List<UserRecipesVM>, None>> GetRecipesForUserAsync(string userId, int numOfRecipes)
+    public async Task<OneOf<List<UserRecipesVM>, None>> GetForUserAsync(string userId, int numOfRecipes)
     {
         var recipes = await
             (from r in _context.Recipe
-            where r.CreatedById == userId
-            select new UserRecipesVM()
-            {
-                Id = r.Id,
-                Name = r.Name
-            }).Take(numOfRecipes).ToListAsync();
+             where r.CreatedById == userId
+             select new UserRecipesVM()
+             {
+                 Id = r.Id,
+                 Name = r.Name
+             }).Take(numOfRecipes).ToListAsync();
 
-        if(recipes.IsNullOrEmpty())
+        if (recipes.IsNullOrEmpty())
             return new None();
 
         return recipes;

@@ -20,7 +20,7 @@ public class UserRecipesViewComponent : ViewComponent
             return View("Unauthenticated");
 
         var userId = _userManager.GetUserId(HttpContext.User);
-        var result = await _recipeService.GetRecipesForUserAsync(userId!, numOfRecipes);
+        var result = await _recipeService.GetForUserAsync(userId!, numOfRecipes);
 
         return result.Match<IViewComponentResult>
         (

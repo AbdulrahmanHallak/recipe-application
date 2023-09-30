@@ -35,7 +35,7 @@ public class CreateModel : PageModel
                 if (user is null)
                     return Page();
 
-                var id = await _service.CreateRecipeAsync(Recipe, user.Id);
+                var id = await _service.CreateAsync(Recipe, user.Id);
                 return RedirectToPage("View", new { Id = id });
             }
         }

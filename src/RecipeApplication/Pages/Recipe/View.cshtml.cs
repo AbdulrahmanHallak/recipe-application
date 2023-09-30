@@ -21,11 +21,11 @@ public class ViewModel : PageModel
     }
     public async Task<IActionResult> OnGetAsync(int id)
     {
-        var recipe = await _service.GetRecipeForAuthorizationAsync(id);
+        var recipe = await _service.GetForAuthorizationAsync(id);
         var authResult = await _authService.AuthorizeAsync(User, recipe, "CanManageRecipe");
         CanManageRecipe = authResult.Succeeded;
 
-        var result = await _service.GetRecipeDetailsAsync(id);
+        var result = await _service.GetDetailAsync(id);
         return result.Match<IActionResult>
         (
             recipe => { Recipe = recipe; return Page(); },
@@ -34,13 +34,13 @@ public class ViewModel : PageModel
     }
     public async Task<IActionResult> OnPostDeleteAsync(int id)
     {
-        var recipe = await _service.GetRecipeForAuthorizationAsync(id);
+        var recipe = await _service.GetForAuthorizationAsync(id);
         var authResult = await _authService.AuthorizeAsync(User, recipe, "CanManageRecipe");
         if (!authResult.Succeeded)
         {
             return new ForbidResult();
         }
-        await _service.DeleteRecipeAsync(id);
+        await _service.DeleteAsync(id);
         return RedirectToPage("/Index");
     }
 }

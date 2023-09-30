@@ -18,7 +18,7 @@ public class RecipeApiController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> OnGetAsync(int id)
     {
-        var result = await _service.GetRecipeDetailsAsync(id);
+        var result = await _service.GetDetailAsync(id);
         return result.Match<IActionResult>
         (
             recipe => Ok(recipe),
@@ -29,7 +29,7 @@ public class RecipeApiController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> OnPutAsynck(int id, EditRecipeVM recipe)
     {
-        var result = await _service.UpdateRecipeAsync(recipe);
+        var result = await _service.UpdateAsync(recipe);
         return result.Match<IActionResult>
         (
             id => Ok(id),

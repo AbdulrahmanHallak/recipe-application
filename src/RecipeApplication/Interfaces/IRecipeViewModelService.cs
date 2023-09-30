@@ -14,7 +14,7 @@ public interface IRecipeViewModelService
     ///   - The first type parameter, <see cref="List{RecipeSummaryVM}"/>, represents a list of recipe summaries if any are available.
     ///   - The second type parameter, <see cref="None"/>, if the database is empty.
     /// </returns>
-    public Task<OneOf<List<RecipeSummaryVM>, None>> GetRecipesSummaryAsync();
+    public Task<OneOf<List<RecipeSummaryVM>, None>> GetSummariesAsync();
 
     /// <summary>
     /// Retrieves detailed information about a recipe by its unique identifier.
@@ -25,7 +25,7 @@ public interface IRecipeViewModelService
     ///   - The first type parameter, <see cref="RecipeDetailsVM"/>, an object with the details of the recipe if found.
     ///   - The second type parameter, <see cref="None"/>, if the recipe is not found.
     /// </returns>
-    public Task<OneOf<RecipeDetailsVM, None>> GetRecipeDetailsAsync(int id);
+    public Task<OneOf<RecipeDetailsVM, None>> GetDetailAsync(int id);
 
     /// <summary>
     /// Retrieves a recipe for updating based on its unique identifier.
@@ -36,7 +36,7 @@ public interface IRecipeViewModelService
     ///   - The first type parameter, <see cref="EditRecipeVM"/>, represents the recipe to be edited if found in the database.
     ///   - The second type parameter, <see cref="None"/>, represents a case where the recipe with the specified ID is not found in the database.
     /// </returns>
-    public Task<OneOf<EditRecipeVM, None>> GetRecipeForUpdateAsync(int id);
+    public Task<OneOf<EditRecipeVM, None>> GetForUpdateAsync(int id);
 
     /// <summary>
     /// Creates a new recipe in the database based on the values provided in the <paramref name="recipeVM"/>.
@@ -46,7 +46,7 @@ public interface IRecipeViewModelService
     /// <returns>
     /// An <see cref="int"/> representing the unique Id of the newly created recipe.
     /// </returns>
-    public Task<int> CreateRecipeAsync(EditRecipeVM recipe, string createdById);
+    public Task<int> CreateAsync(EditRecipeVM recipe, string createdById);
 
     /// <summary>
     /// Updates a recipe in the database if it exists based on the values provided in the <paramref name="recipeVM"/>.
@@ -57,13 +57,13 @@ public interface IRecipeViewModelService
     /// An <see cref="int"/> representing the ID of the updated recipe.
     /// A <see cref="None"/> if the recipe does not exist.
     /// </returns>
-    public Task<OneOf<int, None>> UpdateRecipeAsync(EditRecipeVM recipe);
+    public Task<OneOf<int, None>> UpdateAsync(EditRecipeVM recipe);
 
     /// <summary>
     /// Marks a recipe as deleted if it exists.
     /// </summary>
     /// <param name="id"></param>
-    public Task DeleteRecipeAsync(int id);
+    public Task DeleteAsync(int id);
     /// <summary>
     /// Retrieves a <see cref="Recipe"/> object based on the <paramref name="id"/> provided.
     /// </summary>
@@ -74,7 +74,7 @@ public interface IRecipeViewModelService
     /// <remarks>
     /// This method is ONLY intended to be used for resource-based authorization.
     /// </remarks>
-    public Task<Recipe> GetRecipeForAuthorizationAsync(int id);
+    public Task<Recipe> GetForAuthorizationAsync(int id);
 
     /// <summary>
     /// Retrieves a list of <see cref="UserRecipeVM"/> objects created by the specified user, limited to a specified number of recipes.
@@ -86,5 +86,5 @@ public interface IRecipeViewModelService
     /// <see cref="List{UserRecipeVM}"/>, represents a list of user-created recipes if any are found.
     /// <see cref="None"/>, represents a case where the user has not created any recipes.
     /// </returns>
-    public Task<OneOf<List<UserRecipesVM>, None>> GetRecipesForUserAsync(string userId, int numOfRecipes);
+    public Task<OneOf<List<UserRecipesVM>, None>> GetForUserAsync(string userId, int numOfRecipes);
 }

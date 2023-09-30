@@ -18,7 +18,7 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnGet()
     {
-        var result = await _service.GetRecipesSummaryAsync();
+        var result = await _service.GetSummariesAsync();
         return result.Match<IActionResult>
         (
             list => { Recipes = list; return Page(); },
