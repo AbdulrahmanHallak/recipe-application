@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using RecipeApplication.Filters;
+using RecipeApplication.Interfaces;
 using RecipeApplication.Models;
 
 namespace RecipeApplication.Controllers;
@@ -8,8 +9,8 @@ namespace RecipeApplication.Controllers;
 [ApiController, ApiEnabled]
 public class RecipeApiController : ControllerBase
 {
-    private RecipeViewModelService _service;
-    public RecipeApiController(RecipeViewModelService service)
+    private IRecipeViewModelService _service;
+    public RecipeApiController(IRecipeViewModelService service)
     {
         _service = service;
     }
