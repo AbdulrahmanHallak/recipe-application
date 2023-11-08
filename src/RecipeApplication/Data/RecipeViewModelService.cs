@@ -10,10 +10,12 @@ namespace RecipeApplication.Data;
 public class RecipeViewModelService : IRecipeViewModelService
 {
     private readonly RecipeApplicationContext _context;
+    private readonly ILogger<RecipeApplicationContext> _logger;
 
-    public RecipeViewModelService(RecipeApplicationContext context)
+    public RecipeViewModelService(RecipeApplicationContext context, ILogger<RecipeApplicationContext> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<OneOf<List<RecipeSummaryVM>, None>> GetSummariesAsync()
@@ -52,7 +54,10 @@ public class RecipeViewModelService : IRecipeViewModelService
         ).SingleOrDefaultAsync();
 
         if (recipeDetails is null)
+        {
+            _logger.LogWarning("A request to retrive a recipe with {RecipeId} which does not exist", id);
             return new None();
+        }
 
         return recipeDetails;
     }
@@ -81,7 +86,10 @@ public class RecipeViewModelService : IRecipeViewModelService
         ).SingleOrDefaultAsync();
 
         if (recipeForUpdate is null)
+        {
+            _logger.LogWarning("A request to retrive a recipe with {RecipeId} which does not exist", id);
             return new None();
+        }
 
         return recipeForUpdate;
     }
@@ -117,7 +125,7 @@ public class RecipeViewModelService : IRecipeViewModelService
             where recipee.IsDeleted == false && recipee.Id == recipeVM.Id
             select recipee
         )
-            .Include("Ingredients")
+            .Include(x => x.Ingredients)
             .SingleOrDefaultAsync();
 
         if (recipe is null)
@@ -144,7 +152,12 @@ public class RecipeViewModelService : IRecipeViewModelService
     public async Task DeleteAsync(int id)
     {
         var recipe = await _context.Recipe.FindAsync(id);
-        if (recipe is null) return;
+        if (recipe is null)
+        {
+            _logger.LogWarning("A request to delete a recipe with {RecipeId} which does not exist", id);
+          return;
+        }
+
 
         recipe.IsDeleted = true;
         await _context.SaveChangesAsync();
