@@ -1,12 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OneOf;
 using OneOf.Types;
-using RecipeApplication.Data;
 using RecipeApplication.Interfaces;
 using RecipeApplication.Models;
 
-namespace RecipeApplication;
+namespace RecipeApplication.Data;
 
 public class RecipeViewModelService : IRecipeViewModelService
 {
