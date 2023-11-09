@@ -19,7 +19,7 @@
             @foreach (var item in Model.Recipe.Ingredients)
             {
                 <dt>@item.Name</dt>
-                <dd>@item.Quantity</dd>
+                <dd>@item.Quantity @item.Unit</dd>
             }
         </dl>
     </div>
