@@ -7,18 +7,18 @@ public static class IdentityServiceCollectionExtensions
 {
     public static IServiceCollection AddAuthenticationServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddTransient<CustomEmailConfirmationTokenProvider<ApplicationUser>>(); // Register the custom service into container.
         services.AddDefaultIdentity<ApplicationUser>(options =>
         {
             options.SignIn.RequireConfirmedAccount = true;
             options.Tokens.ProviderMap.Add // Add custom DataProtectorTokenProvider to override tokens lifespan.
             (
                 "CustomEmailConfirmation",
-                new TokenProviderDescriptor(typeof(CustomEmailConfirmationTokenProvider<IdentityUser>))
+                new TokenProviderDescriptor(typeof(CustomEmailConfirmationTokenProvider<ApplicationUser>))
             );
             options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
         })
         .AddEntityFrameworkStores<RecipeApplicationContext>();
-        services.AddTransient(typeof(CustomEmailConfirmationTokenProvider<>)); // Register the custom service into container.
 
         services.AddAuthentication().AddGoogle(options =>
         {
