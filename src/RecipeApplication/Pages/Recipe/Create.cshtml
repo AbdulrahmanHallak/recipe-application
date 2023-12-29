@@ -12,7 +12,6 @@
     <partial name="_EditRecipePartial" for="Recipe" />
 
     <div class="form-group">
-        @* Creating sub-items like this at the same time as the parent is a PITA unfortunately - hacky JS ensues for now! *@
         <table class="table table-striped" id="ingredients">
             <thead>
                 <tr>
@@ -41,7 +40,7 @@
                             <span asp-validation-for="Recipe.Ingredients[i].Unit" class=" text-danger"></span>
                         </td>
                         <td>
-                            <a href="#" class="remove">Remove</a>
+                            <input type="button" onclick="this.parentNode.parentNode.remove()" class="btn-danger" value="Remove" />
                         </td>
                     </tr>
                 }
@@ -60,20 +59,28 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        var ingredients = $('#ingredients tbody');
-        $("#addIngredient").click(function () {
-            var rowNo = ingredients.find('tr').length;
-            var template =
-                '<tr>' +
-                '<td><input name="Recipe.Ingredients[' + rowNo + '].Name" id="Ingredients_' + rowNo + '_Name" /></td>' +
-                '<td><input name="Recipe.Ingredients[' + rowNo + '].Quantity" id="Ingredients_' + rowNo + 'Quantity" /></td>' +
-                '<td><input name="Recipe.Ingredients[' + rowNo + '].Unit" id="Ingredients_' + rowNo + 'Unit" /></td>' +
-                '</tr>';
-            ingredients.append(template);
-        });
-
-        ingredients.on('click', '.remove', function (e) {
-            $(this).closest('tr').remove();
-        });
+            let addRow = function addRow() {
+                let ingredients = document.getElementById('ingredients');
+                let rowLength = ingredients.getElementsByTagName("tr").length - 1;
+                let template =
+                    `<tr>
+                        <td>
+                            <input id="Ingredients_${rowLength}__Name" name="Recipe.Ingredients[${rowLength}].Name" type="text"/>
+                        </td>
+                        <td>
+                            <input id="Recipe_Ingredients_${rowLength}__Quantity" name="Recipe.Ingredients[${rowLength}].Quantity" type="text"/>
+                        </td>
+                        <td>
+                            <input id="Recipe_Ingredients_${rowLength}__Unit" name="Recipe.Ingredients[${rowLength}].Unit" type="text"/>
+                        </td>
+                        <td>
+                        <input type="button" onclick="this.parentNode.parentNode.remove()" class="btn-danger" value="Remove" />
+                        </td>
+                    </tr>
+                    `;
+                ingredients.insertAdjacentHTML("beforeend",template);
+            }
+        let addButton = document.getElementById("addIngredient");
+        addButton.addEventListener('click', addRow);
     </script>
-    }
+}
