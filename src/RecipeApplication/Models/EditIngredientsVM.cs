@@ -10,7 +10,7 @@ public class EditIngredientsVM
     public string Name { get; set; } = default!;
 
 
-    [Required, Range(0, int.MaxValue)]
+    [Required, Range(0, 10_000)]
     public decimal Quantity { get; set; }
 
 
